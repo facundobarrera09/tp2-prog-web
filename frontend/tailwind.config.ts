@@ -11,7 +11,12 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        darkturquoise: "#00ced1",
+        paleturquoise: "#afeeee"
       },
+      boxShadow: {
+        'border': "0px 0px 2px 0px rgba(0,0,0,0.75)"
+      }
     },
   },
   plugins: [],

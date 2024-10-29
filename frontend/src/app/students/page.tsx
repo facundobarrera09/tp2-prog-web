@@ -1,7 +1,7 @@
 const Home: React.FC = () => {
     return (
         <div>
-            Hola
+            Modulo estudiantes
         </div>
     )
 }
