@@ -15,7 +15,9 @@ const config: Config = {
         paleturquoise: "#afeeee"
       },
       boxShadow: {
-        'border': "0px 0px 2px 0px rgba(0,0,0,0.75)"
+        'border': "0px 0px 2px 0px rgba(0,0,0,0.75)",
+        'border-bottom': "0px 1px 2px -1px rgba(0, 0, 0, 0.75)",
+        'card': "0px 1px 4px 0px rgba(0, 0, 0, 0.75)"
       }
     },
   },
