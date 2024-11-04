@@ -27,6 +27,11 @@ function findByDni(dni: number) {
         .find(student => student.dni === dni)
 }
 
+function findByEmail(email: string) {
+    return findAll()
+        .find(student => student.email === email)
+}
+
 function create(firstname: string, lastname: string, dni: number, email: string) {
     const newStudent = new Student(getNextId(), getNextId(), firstname, lastname, dni, email) //Pensar la forma de asignar el sid
 
@@ -36,5 +41,5 @@ function create(firstname: string, lastname: string, dni: number, email: string)
     }
 }
 
-const studentsService = { findAll, findById, create }
+const studentsService = { findAll, findById, create, findByDni, findByEmail }
 export default studentsService
