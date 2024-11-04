@@ -1,5 +1,4 @@
-import { get } from "http"
-import Student from "../models/Student"
+import { PrismaClient } from "@prisma/client"
 
 const students: Student[] = [
     new Student(1, 1, 'Juan', 'Perez', 12345678, 'juanperez@gmail.com'),
@@ -32,12 +31,20 @@ function findByEmail(email: string) {
         .find(student => student.email === email)
 }
 
-function create(firstname: string, lastname: string, dni: number, email: string) {
-    const newStudent = new Student(getNextId(), getNextId(), firstname, lastname, dni, email) //Pensar la forma de asignar el sid
+async function create(firstname: string, lastname: string, dni: bigint, email: string) {
+    const student = {
+        sid: ((await prisma.student.findFirst({ orderBy: { sid: 'desc' } }))?.sid || 990n) + 10n,
+        firstname,
+        lastname,
+        dni,
+        email
+    }
 
-    if (!findAll().find(student => student.firstname === firstname)) {
-        students.push(newStudent)
-        return newStudent
+    const studentWithSameEmail = await prisma.student.findFirst({ where: { email }})
+    const studentWithSameDni = await prisma.student.findFirst({ where: { dni }})
+
+    if (!(studentWithSameDni || studentWithSameEmail)) {
+        return await prisma.student.create({ select: { sid: true, firstname: true, lastname: true, dni: true, email: true }, data: student })
     }
 }
 

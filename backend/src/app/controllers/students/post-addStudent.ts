@@ -1,6 +1,6 @@
 import { RequestHandler, Router } from 'express'
 import { OpenAPIV3 } from 'openapi-types'
-import { createStudentSchema } from './schemas/student.schemas'
+import { createStudentSchema, CreateStudyRequestBody, validNameRegex } from './schemas/student.schemas'
 import studentsService from '../../services/studentsService'
 
 const docs: OpenAPIV3.PathsObject = {
@@ -15,14 +15,23 @@ const docs: OpenAPIV3.PathsObject = {
                             "type": "object",
                             "required": ["name", "careerId"],
                             "properties": {
-                                "name": {
+                                "firstname": {
                                     "type": "string",
-                                    "pattern": "/[A-Z0-9][a-z0-9]{1,10}}/",
-                                    "example": "1st year"
+                                    "pattern": `${validNameRegex}`,
+                                    "example": "Lucas Facundo"
                                 },
-                                "careerId": {
+                                "lastname": {
+                                    "type": "string",
+                                    "pattern": `${validNameRegex}`,
+                                    "example": "Barrera Aybar"
+                                },
+                                "dni": {
                                     "type": "number",
-                                    "example": 4
+                                    "example": "45980781"
+                                },
+                                "email": {
+                                    "type": "string",
+                                    "example": "facundo@email.com"
                                 }
                             }
                         } 
@@ -31,16 +40,16 @@ const docs: OpenAPIV3.PathsObject = {
             },
             "responses": {
                 "201": {
-                    "description": "Success creating the new Level",
+                    "description": "Success creating the new Student",
                 },
                 "400": {
-                    "description": "Missing or wrong information to create the Level"
+                    "description": "Missing or wrong information to create the Student"
                 },
                 "401": {
                     "description": "User is not authenticated"
                 }
             },
-            "tags": ["Careers"]
+            "tags": ["Students"]
         }
     }
 }
@@ -55,16 +64,18 @@ const validateBody: RequestHandler = async (req, res, next) => {
         return
     }
 
+    req.body = validationResult.value
+
     next()
 }
 
-const requestHandler: RequestHandler = (req, res) => {
-    const { firstname, lastname, dni, email }: {firstname: string, lastname: string, dni: number, email: string} = req.body
+const requestHandler: RequestHandler<any, any, CreateStudyRequestBody> = async (req, res) => {
+    const { firstname, lastname, dni, email } = req.body
 
-    const newStudent = studentsService.create(firstname, lastname, dni, email)
+    const newStudent = await studentsService.create(firstname, lastname, dni, email)
 
     if (!newStudent) {
-        res.status(400).json({error: "Student already exists"})
+        res.status(400).json({ error: "Student already exists" })
         return
     }
 
