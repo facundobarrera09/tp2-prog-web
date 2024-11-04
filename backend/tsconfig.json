@@ -10,7 +10,8 @@
         "resolveJsonModule": true,
         "typeRoots": ["./node_modules/@types", "./src/**/*.d.ts", "./src/app/models"],
         "allowImportingTsExtensions": true,
-        "noEmit": true
+        "noEmit": true,
+        "target": "ES2020"
     },
     "include": ["src/**/*"],
     "exclude": ["node_modules"]

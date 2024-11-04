@@ -6,7 +6,9 @@
   "scripts": {
     "start": "npx tsc",
     "dev": "cross-env DEBUG=tarea3:* npx nodemon ./src/index.ts --watch ./src",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+
+    "db:seed": "ts-node ./prisma/seeder.ts"
   },
   "author": "Facundo Barrera & Luciano Carlino",
   "license": "ISC",

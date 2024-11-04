@@ -1,12 +1,22 @@
 import Joi from "joi";
 
-const createStudentSchema = Joi.object().keys({
-    firstname: Joi.string().regex(/^[a-zA-ZáéíóúüÁÉÍÓÚÜñÑ]+$/).min(2).max(25).required(),
-    lastname: Joi.string().regex(/^[a-zA-ZáéíóúüÁÉÍÓÚÜñÑ]+$/).min(2).max(25).required(),
-    dni: Joi.number().min(6).max(8).required(),
-    email: Joi.string().regex(/^[0-9a-zA-ZáéíóúüÁÉÍÓÚÜñÑ]+@[0-9a-zA-ZáéíóúüÁÉÍÓÚÜñÑ]+\.[a-zA-Z]{2,}$/).max(100).required(),
+const validNameRegex = /^[a-zA-ZáéíóúüÁÉÍÓÚÜñÑ]+( [a-zA-ZáéíóúüÁÉÍÓÚÜñÑ]+)?$/
+
+export interface CreateStudyRequestBody {
+    firstname: string,
+    lastname: string,
+    dni: bigint,
+    email: string
+}
+
+const createStudentSchema = Joi.object<CreateStudyRequestBody>().keys({
+    firstname: Joi.string().regex(validNameRegex).min(2).max(25).required(),
+    lastname: Joi.string().regex(validNameRegex).min(2).max(25).required(),
+    dni: Joi.number().max(100000000).required(),
+    email: Joi.string().regex(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).max(100).required(),
 })
 
 export {
-    createStudentSchema
+    createStudentSchema,
+    validNameRegex
 }
