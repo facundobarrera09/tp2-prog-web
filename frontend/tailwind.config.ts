@@ -12,7 +12,8 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
         darkturquoise: "#00ced1",
-        paleturquoise: "#afeeee"
+        paleturquoise: "#afeeee",
+        customred: "#ff0000"
       },
       boxShadow: {
         'border': "0px 0px 2px 0px rgba(0,0,0,0.75)",

@@ -34,8 +34,12 @@ async function findById(id: number) {
     return await prisma.student.findUnique({ where: { id, deleted: false } })
 }
 
-async function findByDni(dni: bigint) {
-    return await prisma.student.findFirst({ where: { dni, deleted: false } })
+async function findByDni(dni: number) {
+    return await prisma.student.findUnique({ where: { dni, deleted: false } })
+}
+
+async function findByEmail(email: string) {
+    return await prisma.student.findUnique({ where: { email, deleted: false } })
 }
 
 async function create(firstname: string, lastname: string, dni: bigint, email: string) {
@@ -56,5 +60,5 @@ async function create(firstname: string, lastname: string, dni: bigint, email: s
     }
 }
 
-const studentsService = { getStudents, findById, findByDni, create }
+const studentsService = { getStudents, findById, findByDni, create, findByEmail }
 export default studentsService
