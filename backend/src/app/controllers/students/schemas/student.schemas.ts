@@ -24,7 +24,7 @@ export interface GetStudentsRequestQuery {
 }
 
 export const getStudentsSchema = Joi.object<GetStudentsRequestQuery>().keys({
-    search: Joi.string().regex(/^[0-9a-zA-ZáéíóúüÁÉÍÓÚÜñÑ]+( [0-9a-zA-ZáéíóúüÁÉÍÓÚÜñÑ]+)?$/).optional(),
+    search: Joi.string().allow("").regex(/^[0-9a-zA-ZáéíóúüÁÉÍÓÚÜñÑ]+( [0-9a-zA-ZáéíóúüÁÉÍÓÚÜñÑ]+)?$/).optional(),
     currentPage: Joi.number().min(1).default(1).optional(),
     pageSize: Joi.number().min(5).default(5).optional()
 })
