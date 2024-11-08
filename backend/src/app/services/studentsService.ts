@@ -1,32 +1,39 @@
 import { PrismaClient, Prisma } from "@prisma/client"
+import { bigintToNumber } from "../utils/bigintToNumber"
 
 const prisma = new PrismaClient()
 
-type Student = Prisma.StudentGetPayload<{select: { id: true, sid: true, dni: true, email: true, firstname: true, lastname: true }}>
+type Student = Prisma.StudentGetPayload<{ select: { id: true, sid: true, dni: true, email: true, firstname: true, lastname: true } }>
 
 async function getStudents(criteria: string = "", currentPage: number = 1, pageSize: number = 5) {
-
-    const count = await prisma.$queryRaw<number>`
+    const countResult = (await prisma.$queryRaw<{ count: bigint }[]>`
             SELECT COUNT(s.id)
             FROM "Student" AS s
-            WHERE translate(lower(concat(s.sid, ' ', s.firstname, ' ', s.lastname)), 'áéíóúü', 'aeiouu')
-                LIKE translate(lower(${'%' + criteria + '%'}), 'áéíóúü', 'aeiouu')
-        `
+            WHERE
+                translate(lower(concat(s.sid, ' ', s.firstname, ' ', s.lastname)), 'áéíóúü', 'aeiouu')
+                LIKE
+                translate(lower(${'%' + criteria + '%'}), 'áéíóúü', 'aeiouu')
+        `)[0].count
 
-    const maxPage = Math.ceil(count / pageSize)
-    
+    const count = bigintToNumber(countResult)
+
+    const maxPage = Math.ceil(count / pageSize) === 0 ? 1 : Math.ceil(count / pageSize)
+
     const students = await prisma.$queryRaw<Student[]>`
             SELECT s.id, s.sid, s.firstname, s.lastname, s.dni, s.email
             FROM "Student" AS s
-            WHERE translate(lower(concat(s.sid, ' ', s.firstname, ' ', s.lastname)), 'áéíóúü', 'aeiouu')
-                LIKE translate(lower(${'%' + criteria + '%'}), 'áéíóúü', 'aeiouu')
+            WHERE
+                translate(lower(concat(s.sid, ' ', s.firstname, ' ', s.lastname)), 'áéíóúü', 'aeiouu')
+                LIKE
+                translate(lower(${'%' + criteria + '%'}), 'áéíóúü', 'aeiouu')
             ORDER BY s.sid ASC
             LIMIT ${pageSize}
-            OFFSET ${currentPage <= maxPage ? currentPage : maxPage}
+            OFFSET ${((currentPage <= maxPage ? currentPage : maxPage) - 1) * pageSize}
         `
 
     return {
-        students: students || [], count: Number(count) || 0
+        students: students || [],
+        count: count || 0
     }
 }
 
@@ -52,8 +59,8 @@ async function create(firstname: string, lastname: string, dni: bigint, email: s
     }
 
     /** @todo Optimizar (eliminar queries innecesarias) */
-    const studentWithSameEmail = await prisma.student.findFirst({ where: { email }})
-    const studentWithSameDni = await prisma.student.findFirst({ where: { dni }})
+    const studentWithSameEmail = await prisma.student.findFirst({ where: { email } })
+    const studentWithSameDni = await prisma.student.findFirst({ where: { dni } })
 
     if (!(studentWithSameDni || studentWithSameEmail)) {
         return await prisma.student.create({ select: { sid: true, firstname: true, lastname: true, dni: true, email: true }, data: student })
