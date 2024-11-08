@@ -1,5 +1,3 @@
-import Button from "../shared/button/button"
-
 interface TableProps {
     children: React.ReactNode | React.ReactNode[]
 }
