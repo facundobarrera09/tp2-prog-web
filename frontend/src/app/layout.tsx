@@ -25,7 +25,7 @@ export default function RootLayout({ children }: Readonly<layoutProps>) {
     return (
         <html lang="en">
             <body
-                className={`${geistSans.variable} ${geistMono.variable} antialiased flex row h-screen`}
+                className={`${geistSans.variable} ${geistMono.variable} antialiased flex row h-full min-h-screen`}
             >
                 <SideNav />
                 {children}
