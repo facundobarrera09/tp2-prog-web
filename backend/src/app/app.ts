@@ -12,7 +12,15 @@ BigInt.prototype["toJSON"] = function () {
 
 const app = express()
 
-app.use(express.json())
+app.use(express.json({
+    reviver: (key: string, value: any) => {
+        if (String(value).match(/^\d+n$/)) {
+            return BigInt(value.replace(/n/, ''))
+        }
+
+        return value
+    }
+}))
 
 app.use(cors({
     origin: function (origin: any, callback: any) {

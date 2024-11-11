@@ -10,7 +10,7 @@ interface SideNavItemProps {
 const SideNavItem: React.FC<SideNavItemProps> = ({ title, href }) => {
     const pathname = usePathname()
 
-    const selected = (pathname === href)
+    const selected = (href === '/' ? pathname === href : pathname.startsWith(href))
 
     return (
         <a className="w-full" href={href}>

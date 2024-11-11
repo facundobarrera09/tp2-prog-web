@@ -23,7 +23,6 @@ const handleAxiosError = <E extends AxiosError>(error: E) => {
     } else {
         notify.error("Ocurrió un error inesperado")
     }
-    console.log(error.config);
 }
 
 export default handleAxiosError

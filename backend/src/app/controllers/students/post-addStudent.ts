@@ -57,14 +57,12 @@ const docs: OpenAPIV3.PathsObject = {
 const postStudentRouter: Router = Router()
 
 const validateBody: RequestHandler = async (req, res, next) => {
-    const validationResult = createStudentSchema.validate(req.body, { abortEarly: false, stripUnknown: true })
+    const validationResult = createStudentSchema.validate({ ...req.body, dni: String(req.body.dni) }, { abortEarly: false, stripUnknown: true })
 
     if (validationResult.error) {
         res.status(400).json(validationResult.error)
         return
     }
-
-    req.body = validationResult.value
 
     next()
 }

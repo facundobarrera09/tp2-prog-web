@@ -3,11 +3,12 @@ interface HTTPResponse<D> {
     data: D
 }
 
-interface HTTPError {
+interface HTTPError<D = any> {
     success: false,
     status: number,
     message: string,
-    error: AxiosError
+    error: AxiosError,
+    data?: D
 }
 
 interface ServiceResponse<D> {
@@ -15,9 +16,10 @@ interface ServiceResponse<D> {
     data: D
 }
 
-interface ServiceError {
+interface ServiceError<D = any> {
     success: false,
     message: string,
+    data?: D
     error: Error
 }
 
@@ -30,6 +32,17 @@ interface GetStudentsQuery {
 interface GetStudentsResponse {
     count: number,
     students: Student[]
+}
+
+interface CreateStudentBody {
+    firstname: string
+    lastname: string
+    dni: bigint
+    email: string
+}
+
+interface CreateStudentResponse {
+
 }
 
 interface Student {

@@ -13,7 +13,7 @@ export interface CreateStudentRequestBody {
 export const createStudentSchema = Joi.object<CreateStudentRequestBody>().keys({
     firstname: Joi.string().regex(validNameRegex).min(2).max(100).required(),
     lastname: Joi.string().regex(validNameRegex).min(2).max(100).required(),
-    dni: Joi.number().min(1).max(999999999).required(),
+    dni: Joi.string().regex(/^\d+$/).max(11).required(),
     email: Joi.string().regex(validEmailRegex).max(100).required(),
 })
 

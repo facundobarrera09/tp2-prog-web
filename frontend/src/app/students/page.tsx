@@ -114,7 +114,7 @@ const Home: React.FC = () => {
     
     return (
         <div className="flex-1 min-w-fit">
-            <Header title="Alumnos" button={<Button color="darkturquoise" href="/addStudent" name="Agregar"></Button>}/>
+            <Header title="Alumnos" button={<Button color="darkturquoise" href="/students/add" name="Agregar"></Button>}/>
 
             <main className="relative p-5">
                 <Overlay active={pageLoading} />

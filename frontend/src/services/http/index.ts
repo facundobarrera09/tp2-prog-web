@@ -3,6 +3,13 @@ import post from "./post";
 import objectAttributesToBigInt from "../../utils/objectAttributesToBigInt";
 import get from "./get";
 
+// @ts-ignore
+// Allow for BigInt JSON serialization
+BigInt.prototype["toJSON"] = function () { 
+    return this.toString() + "n"
+}
+
+
 export const axiosConfig: AxiosRequestConfig = {
     headers: {
         "Content-Type": "application/json"
