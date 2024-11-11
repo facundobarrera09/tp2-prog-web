@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import SideNav from "../components/navigation/SideNav";
+import { Toaster } from "react-hot-toast";
+import { NoSymbolIcon } from "@heroicons/react/16/solid";
 
 const geistSans = localFont({
     src: "./fonts/GeistVF.woff",
@@ -28,7 +30,34 @@ export default function RootLayout({ children }: Readonly<layoutProps>) {
                 className={`${geistSans.variable} ${geistMono.variable} antialiased flex row h-full min-h-screen`}
             >
                 <SideNav />
+                
                 {children}
+
+                <Toaster
+                    position="bottom-right"
+                    reverseOrder={false}
+                    gutter={8}
+                    toastOptions={{
+                        // Define default options
+                        className: '',
+                        duration: 3000,
+                        style: {
+                            background: '#363636',
+                            color: '#fff',
+                        },
+
+                        // Default options for specific types
+                        error: {
+                            duration: 5000,
+                            style: {
+                                color: "white",
+                                background: '#f44336',
+                                fontSize: '1.3rem'
+                            },
+                            icon: <NoSymbolIcon className="w-7 h-7" />
+                        },
+                    }}
+                />
             </body>
         </html>
     );

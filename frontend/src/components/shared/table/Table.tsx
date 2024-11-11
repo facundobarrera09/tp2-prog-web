@@ -31,9 +31,14 @@ export const HeadCell: React.FC<TableProps> = ({ children }) => {
     )
 }
 
-export const Cell: React.FC<TableProps> = ({ children }) => {
+interface CellProps {
+    span?: number
+    children: React.ReactNode | React.ReactNode[]
+}
+
+export const Cell: React.FC<CellProps> = ({ children, span }) => {
     return (
-        <td className="border px-2 py-1 border-solid border-black border-collapse">
+        <td className="border px-2 py-1 border-solid border-black border-collapse" colSpan={span || 1}>
             {children}
         </td>
     )

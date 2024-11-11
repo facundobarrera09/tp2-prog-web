@@ -7,8 +7,12 @@ import { Cell, HeadCell, Row, Table } from "../../components/shared/table/Table"
 import studentsService from "../../services/students"
 import SearchBar from "../../components/shared/table/SearchBar"
 import Paginator from "../../components/shared/table/Paginator"
+import Overlay from "../../components/shared/Overlay"
+import notify from "../../services/notifications"
 
 const Home: React.FC = () => {
+    const [pageLoading, setPageLoading] = useState(false)
+
     const [count, setCount] = useState<number>(0)
     const [students, setStudents] = useState<Student[]>([])
     const [tableComponents, setTableComponents] = useState<React.ReactNode[]>([])
@@ -18,36 +22,56 @@ const Home: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1)
     const [pageSize, setPageSize] = useState(5)
 
-    const fetchData = async () => {
-        // console.log('search', searchCriteria, ', page', currentPage, ', pageSize', pageSize)
+    const fetchData = async (search: string, page: number, size: number, callback?: Function) => {
+        // console.log('search', search, ', page', page, ', pageSize', size)
 
-        const serviceResponse = await studentsService.getStudents(searchCriteria, currentPage, pageSize)
+        const serviceResponse = await studentsService.getStudents(search, page, size)
 
         if (serviceResponse.success) {
             setCount(serviceResponse.data.count)
             setStudents(serviceResponse.data.students)
+            
+            if (callback) callback()
+            return
         }
-        // else {
-        //     En este caso, el único insalvable que puede haber es el Network error, que es manejado en otro lugar
-        // }
     }
-
-    useEffect(() => {
-        fetchData()
-    }, [searchCriteria, pageSize, currentPage])
 
     const handlePageSizeChange = (value: number) => {
-        setPageSize(value)
-        setCurrentPage(1)
+        setPageLoading(true)
+        fetchData(
+            searchCriteria, 1, value,
+            () => {
+                setPageSize(value)
+                setCurrentPage(1)
+            }
+        ).then(() => {
+            setPageLoading(false)
+        })
     }
-
+    
     const handlePageChange = (page: number) => {
-        setCurrentPage(page)
+        setPageLoading(true)
+        fetchData(
+            searchCriteria, page, pageSize,
+            () => {
+                setCurrentPage(page)
+            }
+        ).then(() => {
+            setPageLoading(false)
+        })
     }
 
     const handleSearchChange = (value: string) => {
-        setCurrentPage(1)
-        setSearchCriteria(value)
+        setPageLoading(true)
+        fetchData(
+            value, 1, pageSize,
+            () => {
+                setCurrentPage(1)
+                setSearchCriteria(value)
+            }
+        ).then(() => {
+            setPageLoading(false)
+        })
     }
 
     useEffect(() => {
@@ -73,18 +97,28 @@ const Home: React.FC = () => {
             )
         }))
 
+        if (newTableComponents.length === 1) {
+            newTableComponents.push(
+                <Row key={1}>
+                    <Cell span={4}>No se encontraron alumnos</Cell>
+                </Row>
+            )
+        }
+
         setTableComponents(newTableComponents)
     }, [students])
 
     useEffect(() => {
-        fetchData()
+        fetchData(searchCriteria, currentPage, pageSize)
     }, [])
     
     return (
         <div className="flex-1 min-w-fit">
             <Header title="Alumnos" button={<Button color="darkturquoise" href="/addStudent" name="Agregar"></Button>}/>
 
-            <main className="px-5 my-5">
+            <main className="relative p-5">
+                <Overlay active={pageLoading} />
+
                 <SearchBar setSearchCriteria={handleSearchChange} />
                 <Table>
                     {tableComponents}

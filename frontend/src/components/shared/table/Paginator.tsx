@@ -6,12 +6,13 @@ interface PaginatorProps {
     count: number
     page: number
     pageSize: number
+    disabled?: boolean
     
     setPageSize(value: number): void
     setPage(page: number): void
 }
 
-const Paginator: React.FC<PaginatorProps> = ({ count, page, pageSize, setPageSize, setPage }) => {
+const Paginator: React.FC<PaginatorProps> = ({ count, page, pageSize, setPageSize, setPage, disabled = false }) => {
     const [buttonComponents, setButtonComponents] = useState<ReactNode[]>([])
 
     const paginatorPreviousPage = () => {
@@ -92,7 +93,13 @@ const Paginator: React.FC<PaginatorProps> = ({ count, page, pageSize, setPageSiz
     }, [])
 
     return (
-        <div className="w-full mt-2 flex justify-end">
+        <div className="relative w-full mt-2 flex justify-end">
+            {
+                disabled ?
+                    <div className="absolute left-0 top-0 w-full h-full z-10 bg-[rgba(255,0,0,0.5)]"></div> :
+                    null
+            }
+            
             <form className="w-fit flex">
                 <label htmlFor="items-per-page" className="mr-1">Ítems por página: </label>
                 <select

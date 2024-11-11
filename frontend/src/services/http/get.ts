@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from "axios"
 import { axiosConfig } from "."
+import handleAxiosError from "./error"
 
 const get = async <Response, Query = {[x:string]: any} | undefined> (url: string, query: Query | undefined): Promise<HTTPResponse<Response> | HTTPError> => {
     try {
@@ -15,6 +16,7 @@ const get = async <Response, Query = {[x:string]: any} | undefined> (url: string
     }
     catch (error) {
         if (error instanceof AxiosError) {
+            handleAxiosError(error)
             return {
                 success: false,
                 status: error.response?.status || 0,
