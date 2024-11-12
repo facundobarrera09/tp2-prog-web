@@ -9,13 +9,9 @@ import Joi from "joi"
 import studentsService from "../../../services/students"
 import notify from "../../../services/notifications"
 
-const getError = (path: (string | number)[], ) => {
-
-}
-
 const emptyErrorMessage = "Este campo no puede estar vacio"
 const nameErrorMessage = "Debe contener entre 2 y 100 caracteres, sin digitos o puntuaciones"
-const dniLengthErrorMessage = "Debe contener un máximo de 10 digitos"
+const dniErrorMessage = "Debe contener un máximo de 10 digitos"
 const emailErrorMessage = "Este email no es válido"
 
 const Home: React.FC = () => {
@@ -58,7 +54,7 @@ const Home: React.FC = () => {
                         setDniError(emptyErrorMessage)
                     }
                     else {
-                        setDniError(dniError)
+                        setDniError(dniErrorMessage)
                     }
                     break
                 case 'email':
