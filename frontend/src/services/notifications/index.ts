@@ -1,7 +1,9 @@
 import error from "./error"
+import success from "./success"
 
 const notify = {
-    error
+    error,
+    success
 }
 
 export default notify
