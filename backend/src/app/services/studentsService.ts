@@ -66,8 +66,8 @@ async function create(firstname: string, lastname: string, dni: bigint, email: s
     }
 
     /** @todo Optimizar (eliminar queries innecesarias) */
-    const studentWithSameEmail = await prisma.student.findFirst({ where: { email } })
-    const studentWithSameDni = await prisma.student.findFirst({ where: { dni } })
+    const studentWithSameEmail = await prisma.student.findFirst({ where: { email, deleted: false } })
+    const studentWithSameDni = await prisma.student.findFirst({ where: { dni, deleted: false } })
 
     if (!(studentWithSameDni || studentWithSameEmail)) {
         return await prisma.student.create({ select: { sid: true, firstname: true, lastname: true, dni: true, email: true }, data: student })

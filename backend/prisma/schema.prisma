@@ -18,8 +18,8 @@ model Student {
     sid       BigInt   @db.BigInt @unique
     firstname String   @db.VarChar(100)
     lastname  String   @db.VarChar(100)
-    dni       BigInt   @db.BigInt @unique
-    email     String   @db.VarChar(100) @unique
+    dni       BigInt   @db.BigInt
+    email     String   @db.VarChar(100)
     deleted   Boolean  @default(false) @db.Boolean
     createdAt DateTime @default(now())
     updatedAt DateTime @default(now())
