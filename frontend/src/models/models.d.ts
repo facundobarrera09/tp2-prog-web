@@ -21,6 +21,7 @@ interface ServiceError<D = any> {
     message: string,
     data?: D
     error: Error
+    status?: number
 }
 
 interface GetStudentsQuery {

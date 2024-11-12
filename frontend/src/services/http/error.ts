@@ -12,6 +12,9 @@ const handleAxiosError = <E extends AxiosError>(error: E) => {
             case 403:
                 console.error('Forbidden')
                 // inform lack of permissions to user
+            case 404:
+                console.error('Not found')
+                notify.error("Ocurrió un error inesperado, contacte con el administrador")
                 break
             case 500:
                 notify.error("Error en el servidor, contacte al administrador")

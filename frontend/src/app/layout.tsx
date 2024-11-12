@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import SideNav from "../components/navigation/SideNav";
 import { Toaster } from "react-hot-toast";
-import { NoSymbolIcon } from "@heroicons/react/16/solid";
+import { CheckIcon, NoSymbolIcon } from "@heroicons/react/16/solid";
 
 const geistSans = localFont({
     src: "./fonts/GeistVF.woff",
@@ -52,10 +52,20 @@ export default function RootLayout({ children }: Readonly<layoutProps>) {
                             style: {
                                 color: "white",
                                 background: '#f44336',
-                                fontSize: '1.3rem'
+                                fontSize: '1rem'
                             },
                             icon: <NoSymbolIcon className="w-7 h-7" />
                         },
+
+                        success: {
+                            duration: 5000,
+                            style: {
+                                color: "white",
+                                background: '#138636',
+                                fontSize: '1rem'
+                            },
+                            icon: <CheckIcon className="w-7 h-7" />
+                        }
                     }}
                 />
             </body>

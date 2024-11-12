@@ -1,29 +1,25 @@
 import axios, { AxiosError, AxiosResponse } from "axios"
 import { axiosConfig } from "."
 import handleAxiosError from "./error"
-import { ValidationError } from "joi"
 
-const post = async <Response, Body = {[x:string]: any} | undefined, D = Response> (url: string, body?: Body): Promise<HTTPResponse<Response> | HTTPError<D>> => {
+const del = async <Response> (pathToURI: string): Promise<HTTPResponse<Response> | HTTPError> => {
     try {
-        const response = await axios.post<Response, AxiosResponse<Response | D>, Body>(url, body, {
+        const response = await axios.delete<Response, AxiosResponse<Response>>(pathToURI, {
             ...axiosConfig
         })
-
-        const data = response.data
 
         if (response.status === 400) {
             return {
                 success: false,
                 status: 400,
-                message: response.statusText,
-                data: <D>response.data,
+                message: "Bad request",
                 error: new Error('Bad request')
             }
         }
 
         return {
             success: true,
-            data: <Response>response.data
+            data: response.data
         }
     }
     catch (error) {
@@ -32,8 +28,7 @@ const post = async <Response, Body = {[x:string]: any} | undefined, D = Response
             return {
                 success: false,
                 status: error.response?.status || 0,
-                message: error.message,
-                data: error.response?.data || "Network error",
+                message: error.message || "Network error",
                 error
             }
         }
@@ -43,4 +38,4 @@ const post = async <Response, Body = {[x:string]: any} | undefined, D = Response
     }
 }
 
-export default post
+export default del

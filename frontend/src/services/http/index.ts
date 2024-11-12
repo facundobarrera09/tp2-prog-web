@@ -2,6 +2,7 @@ import { AxiosRequestConfig } from "axios";
 import post from "./post";
 import objectAttributesToBigInt from "../../utils/objectAttributesToBigInt";
 import get from "./get";
+import del from "./delete";
 
 // @ts-ignore
 // Allow for BigInt JSON serialization
@@ -15,14 +16,34 @@ export const axiosConfig: AxiosRequestConfig = {
         "Content-Type": "application/json"
     },
     transformResponse: [
-        (data) => JSON.parse(data),
-        objectAttributesToBigInt
-    ]
+        (data) => {
+            try {
+                const parsedJson = JSON.parse(data)
+                const newData = objectAttributesToBigInt(parsedJson)
+                return newData
+            }
+            catch (e) {
+                if (e instanceof SyntaxError) {
+                    return data
+                }
+
+                throw e
+            }
+        }
+    ],
+    validateStatus: (status) => {
+        if (status === 404) {
+            return false
+        }
+
+        return true
+    }
 }
 
 const httpService = {
     post,
-    get
+    get,
+    delete: del
 }
 
 export default httpService

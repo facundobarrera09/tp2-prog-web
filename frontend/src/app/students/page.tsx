@@ -13,6 +13,9 @@ import notify from "../../services/notifications"
 const Home: React.FC = () => {
     const [pageLoading, setPageLoading] = useState(false)
 
+    const [showDeleteStudentPopup, setShowDeleteStudentPopup] = useState(false)
+    const [studentToDelete, setStudentToDelete] = useState<Student | null>(null)
+
     const [count, setCount] = useState<number>(0)
     const [students, setStudents] = useState<Student[]>([])
     const [tableComponents, setTableComponents] = useState<React.ReactNode[]>([])
@@ -22,7 +25,7 @@ const Home: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1)
     const [pageSize, setPageSize] = useState(5)
 
-    const fetchData = async (search: string, page: number, size: number, callback?: Function) => {
+    const fetchData = async (search: string = searchCriteria, page: number = currentPage, size: number = pageSize, callback?: Function) => {
         // console.log('search', search, ', page', page, ', pageSize', size)
 
         const serviceResponse = await studentsService.getStudents(search, page, size)
@@ -74,6 +77,33 @@ const Home: React.FC = () => {
         })
     }
 
+    const handleStudentDelete = async () => {
+        if (!studentToDelete) return
+
+        setShowDeleteStudentPopup(false)
+        setPageLoading(true)
+
+        studentsService.deleteStudent(studentToDelete.id)
+            .then((response) => {
+                setPageLoading(false)
+                fetchData()
+
+                if (response.success) {
+                    notify.success("El estudiante fue eliminado con éxito")
+                    return
+                }
+
+                if (response.status) {
+                    if (response.status !== 400) return
+                }
+                
+                notify.error(`Error al eliminar el estudiante: No existe`)
+            })
+            .catch((e) => {
+                console.log('error!', e)
+            })
+    }
+
     useEffect(() => {
         const newTableComponents = [
             <Row key={-1}>
@@ -91,7 +121,9 @@ const Home: React.FC = () => {
                     <Cell>{student.firstname}</Cell>
                     <Cell>{student.lastname}</Cell>
                     <Cell>
-                        <Button color="customred" href="#" name="Borrar" />
+                        <Button color="customred" href="#" name="Borrar" 
+                            onClick={() => { setStudentToDelete(student); setShowDeleteStudentPopup(true) }}
+                        />
                     </Cell>
                 </Row>
             )
@@ -109,16 +141,31 @@ const Home: React.FC = () => {
     }, [students])
 
     useEffect(() => {
-        fetchData(searchCriteria, currentPage, pageSize)
+        fetchData()
     }, [])
     
     return (
-        <div className="flex-1 min-w-fit">
+        <div className="relative flex-1 min-w-fit">
             <Header title="Alumnos" button={<Button color="darkturquoise" href="/students/add" name="Agregar"></Button>}/>
+            
+            <Overlay active={pageLoading} />
 
-            <main className="relative p-5">
-                <Overlay active={pageLoading} />
+            <Overlay active={showDeleteStudentPopup}>
+                <div className="w-full h-full flex justify-center items-center">
+                    <div className="flex flex-col items-center gap-3 bg-white px-8 py-4 shadow-card rounded-sm">
+                        <div className="flex flex-col items-center">
+                            <span className="text-xl font-bold">¿Estás seguro de que deseas eliminar a este estudiante?</span>
+                            <span className="text-xl">{`${studentToDelete?.sid} - ${studentToDelete?.lastname}, ${studentToDelete?.firstname}`}</span>
+                        </div>
+                        <div className="flex gap-3">
+                            <Button name="Eliminar" color="customred" onClick={() => handleStudentDelete() } />
+                            <Button name="Cancelar" color="darkturquoise" onClick={() => { setShowDeleteStudentPopup(false) }} />
+                        </div>
+                    </div>
+                </div>
+            </Overlay>
 
+            <main className="p-5">
                 <SearchBar setSearchCriteria={handleSearchChange} />
                 <Table>
                     {tableComponents}
