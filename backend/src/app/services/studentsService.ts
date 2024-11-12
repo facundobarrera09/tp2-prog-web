@@ -10,9 +10,12 @@ async function getStudents(criteria: string = "", currentPage: number = 1, pageS
             SELECT COUNT(s.id)
             FROM "Student" AS s
             WHERE
-                translate(lower(concat(s.sid, ' ', s.firstname, ' ', s.lastname)), 'áéíóúü', 'aeiouu')
-                LIKE
-                translate(lower(${'%' + criteria + '%'}), 'áéíóúü', 'aeiouu')
+                (
+                    translate(lower(concat(s.sid, ' ', s.firstname, ' ', s.lastname)), 'áéíóúü', 'aeiouu')
+                    LIKE
+                    translate(lower(${'%' + criteria + '%'}), 'áéíóúü', 'aeiouu')
+                )
+                AND s.deleted = false
         `)[0].count
 
     const count = bigintToNumber(countResult)
@@ -23,9 +26,12 @@ async function getStudents(criteria: string = "", currentPage: number = 1, pageS
             SELECT s.id, s.sid, s.firstname, s.lastname, s.dni, s.email
             FROM "Student" AS s
             WHERE
-                translate(lower(concat(s.sid, ' ', s.firstname, ' ', s.lastname)), 'áéíóúü', 'aeiouu')
-                LIKE
-                translate(lower(${'%' + criteria + '%'}), 'áéíóúü', 'aeiouu')
+                (
+                    translate(lower(concat(s.sid, ' ', s.firstname, ' ', s.lastname)), 'áéíóúü', 'aeiouu')
+                    LIKE
+                    translate(lower(${'%' + criteria + '%'}), 'áéíóúü', 'aeiouu')
+                )
+                AND s.deleted = false
             ORDER BY s.sid ASC
             LIMIT ${pageSize}
             OFFSET ${((currentPage <= maxPage ? currentPage : maxPage) - 1) * pageSize}
