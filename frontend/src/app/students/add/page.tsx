@@ -7,11 +7,11 @@ import { formStudentsSchema } from "../../../models/schemas/createStudent"
 import Overlay from "../../../components/shared/Overlay"
 import Joi from "joi"
 import studentsService from "../../../services/students"
-import notify from "../../../services/notifications"
 
 const emptyErrorMessage = "Este campo no puede estar vacio"
 const nameErrorMessage = "Debe contener entre 2 y 100 caracteres, sin digitos o puntuaciones"
 const dniErrorMessage = "Debe contener un máximo de 10 digitos"
+const dniLettersErrorMessage = "No debe contener letras"
 const emailErrorMessage = "Este email no es válido"
 
 const Home: React.FC = () => {
@@ -50,11 +50,15 @@ const Home: React.FC = () => {
                     }
                     break
                 case 'dni':
-                    if (error.type == 'string.empty') {
-                        setDniError(emptyErrorMessage)
-                    }
-                    else {
-                        setDniError(dniErrorMessage)
+                    switch (error.type) {
+                        case 'string.empty':
+                            setDniError(emptyErrorMessage)
+                            break;
+                        case 'string.pattern.base': 
+                            setDniError(dniLettersErrorMessage)
+                            break
+                        default:
+                            setDniError(dniErrorMessage)
                     }
                     break
                 case 'email':
@@ -90,7 +94,8 @@ const Home: React.FC = () => {
                             setErrors(response.data.error)
                     }
                     else if (response.message) {
-                        notify.error("Un estudiante con esos datos ya existe")
+                        setGeneralError("Ya existe un estudiante con esos datos")
+                        setTimeout(() => { setGeneralError(null) }, 5000)
                     }
                     else {
                         throw new Error('unexpected')
