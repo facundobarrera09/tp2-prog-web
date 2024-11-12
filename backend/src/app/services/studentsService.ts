@@ -1,5 +1,6 @@
 import { PrismaClient, Prisma } from "@prisma/client"
 import { bigintToNumber } from "../utils/bigintToNumber"
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 
 const prisma = new PrismaClient()
 
@@ -73,5 +74,27 @@ async function create(firstname: string, lastname: string, dni: bigint, email: s
     }
 }
 
-const studentsService = { getStudents, findById, findByDni, create, findByEmail }
+async function deleteStudent(id: number) {
+    try {
+        await prisma.student.update(
+            {
+                where: { id, deleted: false },
+                data: {
+                    deleted: true
+                }
+            }
+        )
+
+        return true
+    }
+    catch (e) {
+        if (e instanceof PrismaClientKnownRequestError && e.message.includes("required but not found")) {
+            return false
+        }
+
+        throw e
+    }
+}
+
+const studentsService = { getStudents, findById, findByDni, create, findByEmail, deleteStudent }
 export default studentsService
