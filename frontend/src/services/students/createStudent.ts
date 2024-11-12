@@ -13,6 +13,13 @@ const createStudent = async (firstname: string, lastname: string, dni: bigint, e
         }
     }
     else {
+        if (response.status === 400) {
+            return {
+                success: false,
+                message: 'Ya existe un usuario con esos datos',
+                error: response.error
+            }
+        }
         return {
             success: false,
             data: response.data,

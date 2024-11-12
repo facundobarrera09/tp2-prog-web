@@ -84,25 +84,22 @@ const Home: React.FC = () => {
                 setLoading(false)
 
                 if (!response.success) {
+                    // console.log('response', response)
                     if (response.data) {
-                        // @ts-ignore
-                        if (typeof response.data?.error === 'string') {
-                            // setGeneralError(response.data.error)
-                            notify.error("Un estudiante con esos datos ya existe")
-                        }
-                        else {
-                            setErrors(response.data?.error)
-                        }
-                        return
+                        if (response.data.error instanceof Joi.ValidationError)
+                            setErrors(response.data.error)
                     }
-                    throw new Error('unexpected')
+                    else if (response.message) {
+                        notify.error("Un estudiante con esos datos ya existe")
+                    }
+                    else {
+                        throw new Error('unexpected')
+                    }
+                    return
                 }
 
                 setShowConfirmationDisplay(true)
             })
-
-
-        console.log('created!')
     }
 
     return (
