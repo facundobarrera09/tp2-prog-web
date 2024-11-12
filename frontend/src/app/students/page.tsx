@@ -37,6 +37,9 @@ const Home: React.FC = () => {
             if (callback) callback()
             return
         }
+
+        setCount(0)
+        setStudents([])
     }
 
     const handlePageSizeChange = (value: number) => {
@@ -104,7 +107,7 @@ const Home: React.FC = () => {
             })
     }
 
-    useEffect(() => {
+    const updateTableComponents = (students: Student[]) => {
         const newTableComponents = [
             <Row key={-1}>
                 <HeadCell>Legajo</HeadCell>
@@ -132,13 +135,23 @@ const Home: React.FC = () => {
         if (newTableComponents.length === 1) {
             newTableComponents.push(
                 <Row key={1}>
-                    <Cell span={4}>No se encontraron alumnos</Cell>
+                    <Cell span={4}>{pageLoading ? 'Cargando...' : 'No se encontraron alumnos'}</Cell>
                 </Row>
             )
         }
 
         setTableComponents(newTableComponents)
+    }
+
+    useEffect(() => {
+        updateTableComponents(students)
     }, [students])
+
+    useEffect(() => {
+        if (pageLoading) {
+            updateTableComponents([])
+        }
+    }, [pageLoading])
 
     useEffect(() => {
         fetchData()
@@ -147,8 +160,6 @@ const Home: React.FC = () => {
     return (
         <div className="relative flex-1 min-w-fit">
             <Header title="Alumnos" button={<Button color="darkturquoise" href="/students/add" name="Agregar"></Button>}/>
-            
-            <Overlay active={pageLoading} />
 
             <Overlay active={showDeleteStudentPopup}>
                 <div className="w-full h-full flex justify-center items-center">
