@@ -46,7 +46,7 @@ const Home: React.FC = () => {
                         setLastnameError(emptyErrorMessage)
                     }
                     else {
-                        setFirstnameError(nameErrorMessage)
+                        setLastnameError(nameErrorMessage)
                     }
                     break
                 case 'dni':
